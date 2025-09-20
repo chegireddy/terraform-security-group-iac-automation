@@ -37,17 +37,8 @@ jobs:
         run: terraform plan -out=tfplan
         working-directory: ./securitygroup
 
-  manual-approval:
-    needs: terraform-plan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Await Manual Approval
-        run: echo "Please approve the Terraform Apply step manually."
-        env:
-          GITHUB_ENV: ${{ github.event.inputs }}
-
   terraform-apply:
-    needs: manual-approval
+    needs: terraform-plan
     runs-on: ubuntu-latest
 
     steps:
