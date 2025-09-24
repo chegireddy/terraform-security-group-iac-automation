@@ -41,18 +41,18 @@ on:
         type: boolean  # boolean input parameter
         default: false # default value for the input parameter
 
-  permissions:
-    id-token: write
-    contents: read
-    actions: read
-    deployments: read
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+  deployments: read
 
   jobs:
     build-securitygroup:
       uses: ./.github/workflows/release_securitygroup.yml
-      if: contains(github.event.inputs.LAYERS, 'securitygroup')
+      if: (inputs.LAYERS == 'securitygroup')      # use inputs for workflow_dispatch event
       with:
-        ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}
+        ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}   # use github.event.inputs to access the input parameters for workflow_call event
         REGION: ${{ github.event.inputs.REGION }}
         LAYERS: ${{ github.event.inputs.LAYERS }}
         APPROVE: ${{ github.event.inputs.APPROVE }}
@@ -60,7 +60,7 @@ on:
 
     build-vpc:
       uses: ./.github/workflows/release_vpc.yml
-      if: contains(github.event.inputs.LAYERS, 'vpc')
+      if: contains(inputs.LAYERS, 'vpc')        
       with:
         ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}
         REGION: ${{ github.event.inputs.REGION }}
@@ -70,7 +70,7 @@ on:
     
     build-subnet:
       uses: ./.github/workflows/release_subnet.yml
-      if: contains(github.event.inputs.LAYERS, 'subnet')
+      if: contains(inputs.LAYERS, 'subnet')
       with:
         ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
         REGION: ${{ inputs.REGION }}
@@ -80,7 +80,7 @@ on:
 
     build-ec2:
       uses: ./.github/workflows/release_ec2.yml 
-      if: contains(github.event.inputs.LAYERS, 'ec2')
+      if: contains(inputs.LAYERS, 'ec2')
       with:
         ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}
         REGION: ${{ github.event.inputs.REGION }}
