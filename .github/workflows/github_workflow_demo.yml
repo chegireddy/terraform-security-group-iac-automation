@@ -1,0 +1,73 @@
+name: Github workflow demo
+
+on:
+  workflow_dispatch:            # manual trigger
+
+on: 
+  push:                         # automatic trigger
+    branches:
+      - main
+on: 
+  pull_request:                 # automatic trigger
+      - branches:
+          - main
+
+  jobs:                         # create a job
+  env:
+    ENV: development_at_job_level   # set environment variable at job level
+    PARENT: chegireddy
+  plan:
+    runs-on: ubuntu-latest      # specify the OS
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - id: step1   
+        name: display github repository name
+        run: echo "The repository name is ${{ github.repository }}" # display the repository name
+        env:
+          ENV: development_at_step_level  # set environment variable at step level
+          SON: chandu
+        run: echo "The environment is $ENV and parent is $PARENT and son is $SON"  # display the environment variable values
+
+      - id: step2
+        name: display github actor name
+        run: echo "The actor name is ${{ github.actor }}"           # display the actor name - who triggered the workflow
+
+      - id: step3
+        name: display github event name
+        run: echo "The event name is ${{ github.event_name }}"       # display the event name - what event triggered the workflow ex: push, pull_request, workflow_dispatch
+
+      - id: step4
+        name: display github workflow name
+        run: echo "The workflow name is ${{ github.workflow }}"      # display the workflow name ex: CI, CD, github workflow demo etc
+
+      - id: step5
+        name: display github sha
+        run: echo "The sha is ${{ github.sha }}"                    # display the sha - commit ID
+      
+      - id: step6
+        name: display github ref
+        run: echo "The ref is ${{ github.ref }}"                    # display the ref - branch name
+
+
+  jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - id: step1
+        name: job2-deploy-abc
+        run: echo "This is job1-plan"
+
+      - id: step2
+        name: job2-deploy-xyz
+        run: echo "This is job2-plan"
+
+ 
