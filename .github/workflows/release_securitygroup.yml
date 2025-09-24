@@ -33,14 +33,19 @@ jobs:
       env_region: ${{ inputs.REGION }}
       env_layers: ${{ inputs.LAYERS }}
       password: ${{ secrets.DEV }}
-    run: |
-      echo "Environmental variable Environment: $env_environment"
-      echo "Environmental variable Region: $env_region"
-      echo "Environmental variable Layers: $env_layers"
-      echo "Secret Password: $password"
-      echo "tfc token is $TFC_TOKEN"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      if [[ "$env_layers" == *"securitygroup"* ]]; then
-        echo "Starting deployment for securitygroup layer..."
-        echo "Secrect value is ${{ secrets.DEV }} "
-        echo "os.getenv('DEV')"
+      - name: Display environment variables and secrets
+        run: |
+          echo "Environmental variable Environment: $env_environment"
+          echo "Environmental variable Region: $env_region"
+          echo "Environmental variable Layers: $env_layers"
+          echo "Secret Password: $password"
+          echo "tfc token is $TFC_TOKEN"
+
+          if [[ "$env_layers" == *"securitygroup"* ]]; then
+            echo "Starting deployment for securitygroup layer..."
+            echo "Secrect value is ${{ secrets.DEV }} "
+            echo "os.getenv('DEV')"
