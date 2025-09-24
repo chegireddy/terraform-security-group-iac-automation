@@ -43,6 +43,3 @@ jobs:
           echo "Environmental variable Region: $env_region"
           echo "Environmental variable Layers: $env_layers"
           echo "tfc token is $TFC_TOKEN"
-
-          if [[ "$env_layers" == *"securitygroup"* ]]; then
-            echo "Starting deployment for securitygroup layer..."
