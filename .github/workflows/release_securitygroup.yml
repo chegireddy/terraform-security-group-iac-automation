@@ -1,5 +1,5 @@
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       ENVIRONMENT:
         description: 'Environment to deploy (e.g., development, staging, production)'
@@ -20,21 +20,27 @@ permissions:
   actions: read
   deployments: read
 
-jobs:
-  name: securitygroup
-  runs-on: ubuntu-latest
-  env:
-    env_environment: ${{ inputs.ENVIRONMENT }}
-    env_region: ${{ inputs.REGION }}
-    env_layers: ${{ inputs.LAYERS }}
-    password: ${{ secrets.DEV }}
-  run: |
-    echo "Environmental variable Environment: $env_environment"
-    echo "Environmental variable Region: $env_region"
-    echo "Environmental variable Layers: $env_layers"
-    echo "Secret Password: $password"
+env:
+  TFC_TOKEN: ${{ secrets.TFC_TOKEN }}  # set environment variable at workflow level
 
-    if [[ "$env_layers" == *"securitygroup"* ]]; then
-      echo "Starting deployment for securitygroup layer..."
-      echo "Secrect value is ${{ secrets.DEV }} "
-      echo "os.getenv('DEV')"
+jobs:
+  securitygroup:
+    if: contains(inputs.LAYERS, 'securitygroup')  # condition to run this job only if 'securitygroup' is in the LAYERS input
+    name: securitygroup
+    runs-on: ubuntu-latest
+    env:
+      env_environment: ${{ inputs.ENVIRONMENT }}
+      env_region: ${{ inputs.REGION }}
+      env_layers: ${{ inputs.LAYERS }}
+      password: ${{ secrets.DEV }}
+    run: |
+      echo "Environmental variable Environment: $env_environment"
+      echo "Environmental variable Region: $env_region"
+      echo "Environmental variable Layers: $env_layers"
+      echo "Secret Password: $password"
+      echo "tfc token is $TFC_TOKEN"
+
+      if [[ "$env_layers" == *"securitygroup"* ]]; then
+        echo "Starting deployment for securitygroup layer..."
+        echo "Secrect value is ${{ secrets.DEV }} "
+        echo "os.getenv('DEV')"
