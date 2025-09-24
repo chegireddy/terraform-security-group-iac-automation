@@ -28,11 +28,11 @@ jobs:
     if: contains(inputs.LAYERS, 'securitygroup')  # condition to run this job only if 'securitygroup' is in the LAYERS input
     name: securitygroup
     runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}  # set environment for the job
     env:
       env_environment: ${{ inputs.ENVIRONMENT }}
       env_region: ${{ inputs.REGION }}
       env_layers: ${{ inputs.LAYERS }}
-      password: ${{ secrets.DEV }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -42,10 +42,7 @@ jobs:
           echo "Environmental variable Environment: $env_environment"
           echo "Environmental variable Region: $env_region"
           echo "Environmental variable Layers: $env_layers"
-          echo "Secret Password: $password"
           echo "tfc token is $TFC_TOKEN"
 
           if [[ "$env_layers" == *"securitygroup"* ]]; then
             echo "Starting deployment for securitygroup layer..."
-            echo "Secrect value is ${{ secrets.DEV }} "
-            echo "os.getenv('DEV')"

@@ -10,7 +10,7 @@ on:
         type: choice
         options:        # options for the choice input parameter
           - development
-          - staging
+          - acceptance
           - production
         default: development # default value for the input parameter
       REGION:
