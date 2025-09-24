@@ -1,5 +1,5 @@
 name: Release
-run-name: Release - ${{ github.ref_name }} - ${{inputs.ENVIRONMENT}} - ${{inputs.REGION}} # display the branch name in the run name
+run-name: Release - ${{ github.ref_name }} - ${{ inputs.ENVIRONMENT }} - ${{ inputs.REGION }}   # this will show in the github actions UI
 
 on:
   workflow_dispatch:   # manual trigger
@@ -34,7 +34,7 @@ on:
           - elb
           - database
           - application
-        default: security
+        default: securitygroup
       APPROVE:
         description: 'Approve the deployment' # description of the input parameter
         required: true  # make the input parameter required 
@@ -47,43 +47,43 @@ permissions:
   actions: read
   deployments: read
 
-  jobs:
-    build-securitygroup:
-      uses: ./.github/workflows/release_securitygroup.yml
-      if: (inputs.LAYERS == 'securitygroup')      # use inputs for workflow_dispatch event
-      with:
-        ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}   # use github.event.inputs to access the input parameters for workflow_call event
-        REGION: ${{ github.event.inputs.REGION }}
-        LAYERS: ${{ github.event.inputs.LAYERS }}
-        APPROVE: ${{ github.event.inputs.APPROVE }}
-      secrets: inherit              # inherit secrets from the current repository to reusable workflow
+jobs:  # Correctly placed jobs block
+  build-securitygroup:
+    uses: ./.github/workflows/release_securitygroup.yml
+    if: ${{ inputs.LAYERS == 'securitygroup' }}      # use inputs for workflow_dispatch event
+    with:
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      REGION: ${{ inputs.REGION }}
+      LAYERS: ${{ inputs.LAYERS }}
+      APPROVE: ${{ inputs.APPROVE }}
+    secrets: inherit              # inherit secrets from the current repository to reusable workflow
 
-    build-vpc:
-      uses: ./.github/workflows/release_vpc.yml
-      if: contains(inputs.LAYERS, 'vpc')        
-      with:
-        ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}
-        REGION: ${{ github.event.inputs.REGION }}
-        LAYERS: ${{ github.event.inputs.LAYERS }}
-        APPROVE: ${{ github.event.inputs.APPROVE }}
-      secrets: inherit              # inherit secrets from the current repository to reusable workflow
+  build-vpc:
+    uses: ./.github/workflows/release_vpc.yml
+    if: contains(inputs.LAYERS, 'vpc')        
+    with:
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      REGION: ${{ inputs.REGION }}
+      LAYERS: ${{ inputs.LAYERS }}
+      APPROVE: ${{ inputs.APPROVE }}
+    secrets: inherit              # inherit secrets from the current repository to reusable workflow
     
-    build-subnet:
-      uses: ./.github/workflows/release_subnet.yml
-      if: contains(inputs.LAYERS, 'subnet')
-      with:
-        ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
-        REGION: ${{ inputs.REGION }}
-        LAYERS: ${{ inputs.LAYERS }}
-        APPROVE: ${{ inputs.APPROVE }}
-      secrets: inherit              # inherit secrets from the current repository to reusable workflow
+  build-subnet:
+    uses: ./.github/workflows/release_subnet.yml
+    if: contains(inputs.LAYERS, 'subnet')
+    with:
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      REGION: ${{ inputs.REGION }}
+      LAYERS: ${{ inputs.LAYERS }}
+      APPROVE: ${{ inputs.APPROVE }}
+    secrets: inherit              # inherit secrets from the current repository to reusable workflow
 
-    build-ec2:
-      uses: ./.github/workflows/release_ec2.yml 
-      if: contains(inputs.LAYERS, 'ec2')
-      with:
-        ENVIRONMENT: ${{ github.event.inputs.ENVIRONMENT }}
-        REGION: ${{ github.event.inputs.REGION }}
-        LAYERS: ${{ github.event.inputs.LAYERS }}
-        APPROVE: ${{ github.event.inputs.APPROVE }}
-      secrets: inherit              # inherit secrets from the current repository to reusable workflow
+  build-ec2:
+    uses: ./.github/workflows/release_ec2.yml 
+    if: contains(inputs.LAYERS, 'ec2')
+    with:
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      REGION: ${{ inputs.REGION }}
+      LAYERS: ${{ inputs.LAYERS }}
+      APPROVE: ${{ inputs.APPROVE }}
+    secrets: inherit              # inherit secrets from the current repository to reusable workflow
