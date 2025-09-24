@@ -41,11 +41,6 @@ on:
       type: boolean  # boolean input parameter
       default: false # default value for the input parameter
 
-push:
-  branches:
-    - main
-    - viji*
-
 permissions:
   id-token: write
   contents: read
